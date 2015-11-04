@@ -1,0 +1,34 @@
+#IncludeRegexLine: ^[ 	]*#[ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/Users/yangyang/GitHub/UCLA_EE209_PositionDetection/main.cpp
+iostream
+-
+fstream
+-
+opencv2/opencv.hpp
+/Users/yangyang/GitHub/UCLA_EE209_PositionDetection/opencv2/opencv.hpp
+opencv2/highgui/highgui.hpp
+/Users/yangyang/GitHub/UCLA_EE209_PositionDetection/opencv2/highgui/highgui.hpp
+iostream
+-
+time.h
+-
+dirent.h
+-
+sstream
+-
+dirent.h
+-
+sys/types.h
+-
+sys/stat.h
+-
+curl/curl.h
+-
+

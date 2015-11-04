@@ -169,7 +169,8 @@ int main()
     cvtColor(c_frame, c_frame, CV_RGB2GRAY);
     cvtColor(p_frame, p_frame, CV_RGB2GRAY);
     cvtColor(n_frame, n_frame, CV_RGB2GRAY);
-   
+    //imshow("MyVideo",n_frame);
+
     Mat difference1 , difference2;
     Mat motion;
     int nChanges;
@@ -182,8 +183,13 @@ int main()
     int motion_threthold = 5;
     int maxDev = 20;
     
-    int x_start = c_frame.cols, x_stop = 0;
-    int y_start = c_frame.cols, y_stop = 0;
+    //int x_stop = c_frame.cols, x_start = 0;
+    //int y_stop = c_frame.cols, y_start = 0;
+
+    int x_start = 10, x_stop = c_frame.cols-11;
+    int y_start = 350, y_stop = 530;
+    
+    cout << c_frame.cols << endl;
     Mat kernel_ero = getStructuringElement(MORPH_RECT, Size(2,2));
     
     while (true)
@@ -201,7 +207,9 @@ int main()
         cap.read(n_frame);
         result = n_frame;
         cvtColor(n_frame, n_frame, CV_RGB2GRAY);
+        imshow("MyVideo",n_frame);
         
+
 
         absdiff(p_frame, n_frame, difference1);
         absdiff(n_frame, c_frame, difference2);
@@ -209,14 +217,20 @@ int main()
         bitwise_and(difference1, difference2, motion);
         threshold(motion, motion, 35, 255, CV_THRESH_BINARY); //set threshold to get object from backgroud
         erode(motion, motion, kernel_ero);
+        imshow("MyVideo",motion);
        
         nChanges = detectMotopn(motion, result, result_cropped, x_start, x_stop, y_start, y_stop, maxDev, color);
+        cout << "number of changes are"<< nChanges << endl;
        
         if(nChanges>=motion_threthold)
         {
             if(nSequence>0){ 
                 saveImg(result,DIR,EXT,DIR_FORMAT.c_str(),FILE_FORMAT.c_str());
                 saveImg(result_cropped,DIR,EXT,DIR_FORMAT.c_str(),CROPPED_FILE_FORMAT.c_str());
+                cout << "motion detected" << endl;
+                
+                //imshow("MyVideo", result_cropped); //show the frame in "MyVideo" window
+                
             }
             nSequence++;
         }
