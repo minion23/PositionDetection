@@ -18,24 +18,15 @@ using namespace std;
 int baseline_x_start, baseline_x_end;
 int baseline_y_start;                   //use these three line to get the position of people in the figure
 
-// Check if the directory exists, if not create it
-// This function will create a new directory if the image is the first
-// image taken for a specific day
 inline void directoryExistsOrCreate(const char* pzPath)
 {
     DIR *pDir;
-    // directory doesn't exists -> create it
     if ( pzPath == NULL || (pDir = opendir (pzPath)) == NULL)
         mkdir(pzPath, 0777);
-    // if directory exists we opened it and we
-    // have to close the directory again.
     else if(pDir != NULL)
         (void) closedir (pDir);
 }
 
-// When motion is detected we write the image to disk
-//    - Check if the directory exists where the image will be stored.
-//    - Build the directory and image names.
 int incr = 0;
 inline bool saveImg(Mat image, const string DIRECTORY, const string EXTENSION, const char * DIR_FORMAT, const char * FILE_FORMAT)
 {
@@ -147,6 +138,9 @@ int main()
     string FILE_FORMAT = DIR_FORMAT + "/" + "%d%h%Y_%H%M%S"; // 1Jan1970/1Jan1970_12153
     string CROPPED_FILE_FORMAT = DIR_FORMAT + "/cropped/" + "%d%h%Y_%H%M%S"; // 1Jan1970/cropped/1Jan1970_121539
     
+    Mat reference_image1, reference_image2;
+    
+    //reference_image = imread("reference.jpg",1); //set reference 
 
     VideoCapture cap(0); // open the video camera no. 0
     if (!cap.isOpened())  // if not success, exit program
@@ -157,18 +151,24 @@ int main()
     //double dWidth = cap.get(CV_CAP_PROP_FRAME_WIDTH); //get the width of frames of the video
     //double dHeight = cap.get(CV_CAP_PROP_FRAME_HEIGHT); //get the height of frames of the video
     //cout << "Frame size : " << dWidth << " x " << dHeight << endl;
-    namedWindow("MyVideo",CV_WINDOW_AUTOSIZE); //create a window called "MyVideo"
+    //namedWindow("MyVideo",CV_WINDOW_AUTOSIZE); //create a window called "MyVideo"
     
     Mat result, result_cropped;
     Mat p_frame, c_frame, n_frame;
-    cap.read(p_frame);
-    result = p_frame;
-    cap.read(c_frame);
-    cap.read(n_frame);
+    cap.read(reference_image1);  //read the first image as reference image
+    cap.read(reference_image2);
+    //cap.read(p_frame);
+    //result = p_frame;
+    //cap.read(c_frame);
+    //cap.read(n_frame);
 
-    cvtColor(c_frame, c_frame, CV_RGB2GRAY);
-    cvtColor(p_frame, p_frame, CV_RGB2GRAY);
-    cvtColor(n_frame, n_frame, CV_RGB2GRAY);
+    //cvtColor(c_frame, c_frame, CV_RGB2GRAY);
+    //cvtColor(p_frame, p_frame, CV_RGB2GRAY);
+    //cvtColor(n_frame, n_frame, CV_RGB2GRAY);
+    
+    result = reference_image1;
+    cvtColor(reference_image1, reference_image1, CV_RGB2GRAY);
+    cvtColor(reference_image2, reference_image2, CV_RGB2GRAY);
     //imshow("MyVideo",n_frame);
 
     Mat difference1 , difference2;
@@ -187,7 +187,8 @@ int main()
     //int y_stop = c_frame.cols, y_start = 0;
 
     int x_start = 10, x_stop = c_frame.cols-11;
-    int y_start = 350, y_stop = 530;
+    int y_start = 350, y_stop = c_frame.rows-11;
+    //int y_start = 350, y_stop = 530;
     
     cout << c_frame.cols << endl;
     Mat kernel_ero = getStructuringElement(MORPH_RECT, Size(2,2));
@@ -202,22 +203,27 @@ int main()
              //break;
         //}
         //imshow("MyVideo", frame); //show the frame in "MyVideo" window
-        p_frame = c_frame;
-        c_frame = n_frame;
-        cap.read(n_frame);
-        result = n_frame;
-        cvtColor(n_frame, n_frame, CV_RGB2GRAY);
-        imshow("MyVideo",n_frame);
+        //p_frame = c_frame;
+        //c_frame = n_frame;
+        //cap.read(n_frame);
+        cap.read(c_frame);
+        result = c_frame;
+        //result = n_frame;
+        //cvtColor(n_frame, n_frame, CV_RGB2GRAY);
         
+        cvtColor(c_frame, c_frame, CV_RGB2GRAY); 
 
 
-        absdiff(p_frame, n_frame, difference1);
-        absdiff(n_frame, c_frame, difference2);
+        //absdiff(p_frame, n_frame, difference1);
+        //absdiff(n_frame, c_frame, difference2);
+        
+        absdiff(reference_image1, c_frame, difference1);
+        absdiff(c_frame, reference_image2, difference2);
         
         bitwise_and(difference1, difference2, motion);
         threshold(motion, motion, 35, 255, CV_THRESH_BINARY); //set threshold to get object from backgroud
         erode(motion, motion, kernel_ero);
-        imshow("MyVideo",motion);
+        //imshow("MyVideo",motion);
        
         nChanges = detectMotopn(motion, result, result_cropped, x_start, x_stop, y_start, y_stop, maxDev, color);
         cout << "number of changes are"<< nChanges << endl;
