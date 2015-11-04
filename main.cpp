@@ -73,7 +73,7 @@ inline void PostData(int area_number){
     curl = curl_easy_init();
     if(curl){
         curl_easy_setopt(curl, CURLOPT_URL, "127.0.0.1:8010");
-        curl_easy_setopt(curl, CURLOPT_POSTFIELDS, "area_number"); 
+        curl_easy_setopt(curl, CURLOPT_POSTFIELDS, area_number); 
 
         res = curl_easy_perform(curl);  
   
@@ -236,8 +236,5 @@ int main()
 
     }
 
-
-
     return 0;
-
 }
