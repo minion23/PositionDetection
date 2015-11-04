@@ -10,12 +10,13 @@
 #include <dirent.h>
 #include <sys/types.h>
 #include <sys/stat.h>
-
+#include <curl/curl.h>
 
 using namespace cv;
 using namespace std;
 
-
+int baseline_x_start, baseline_x_end;
+int baseline_y_start;                   //use these three line to get the position of people in the figure
 
 // Check if the directory exists, if not create it
 // This function will create a new directory if the image is the first
@@ -63,7 +64,26 @@ inline bool saveImg(Mat image, const string DIRECTORY, const string EXTENSION, c
     return imwrite(ss.str().c_str(), image);
 }
 
+inline void PostData(int area_number){
+    CURL *curl;
+    CURLcode res;
 
+    curl_global_init(CURL_GLOBAL_ALL);
+
+    curl = curl_easy_init();
+    if(curl){
+        curl_easy_setopt(curl, CURLOPT_URL, "127.0.0.1:8010");
+        curl_easy_setopt(curl, CURLOPT_POSTFIELDS, "area_number"); 
+
+        res = curl_easy_perform(curl);  
+  
+        if(res != CURLE_OK)  
+            fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(res));  
+        
+        curl_easy_cleanup(curl); 
+    }
+    curl_global_cleanup(); 
+}
 
 inline int detectMotopn(const Mat & motion, Mat & result, Mat & result_cropped,
                         int x_start, int x_stop, int y_start, int y_stop, int max_deviation,
@@ -107,6 +127,9 @@ inline int detectMotopn(const Mat & motion, Mat & result, Mat & result_cropped,
             cropped.copyTo(result_cropped);
             rectangle(result,rect,color,1);
         }
+        baseline_x_end = min_x;
+        baseline_x_start = max_x;
+        baseline_y_start = min_y;
         return number_of_changes;
     }
     return 0;
