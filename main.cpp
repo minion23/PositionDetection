@@ -114,10 +114,10 @@ inline int detectMotopn(const Mat & motion, Mat & result, Mat & result_cropped,
 
 int main()
 {   
-    const string DIR = "/home/pi/motion_src/pics/"; // directory where the images will be stored
+    const string DIR = "/Users/yangyang/209_test/pic"; // directory where the images will be stored
     const string EXT = ".jpg"; // extension of the images
     const int DELAY = 500; // in mseconds, take a picture every 1/2 second
-    const string LOGFILE = "/home/pi/motion_src/log";
+    const string LOGFILE = "/Users/yangyang/209_test/log";
 
     // Format of directory
     string DIR_FORMAT = "%d%h%Y"; // 1Jan1970
