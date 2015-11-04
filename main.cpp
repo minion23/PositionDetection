@@ -184,7 +184,7 @@ int main()
         absdiff(n_frame, c_frame, difference2);
         
         bitwise_and(difference1, difference2, motion);
-        threshold(motion, motion, 35, 255, CV_THRESH_BINARY);
+        threshold(motion, motion, 35, 255, CV_THRESH_BINARY); //set threshold to get object from backgroud
         erode(motion, motion, kernel_ero);
        
         nChanges = detectMotopn(motion, result, result_cropped, x_start, x_stop, y_start, y_stop, maxDev, color);
