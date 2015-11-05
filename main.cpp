@@ -82,18 +82,21 @@ inline int detectMotopn(const Mat & motion, Mat & result, Mat & result_cropped,
 {
     Scalar mean, stddev;
     meanStdDev(motion,mean,stddev);
-    
     if(stddev[0] < max_deviation)
     {
         int number_of_changes = 0;
         int min_x = motion.cols, max_x = 0;
         int min_y = motion.cols, max_y = 0;
-    
+        //cout << "stdev is" << stddev[0]<<endl; 
+        //cout << "y is" << y_start << y_stop<<endl;
+        //cout << "x is" << x_start << x_stop <<endl;
         //loop over images to detect
         for(int j = y_start; j<y_stop; j+= 2){      //height of images
+            //cout<< "here1" <<endl;
             for(int i = x_start; i<x_stop; i+=2){   //width of images
-            
-                if(static_cast<int>(motion.at<uchar>(j,i)) == 255)
+                //cout<< "here2"<<endl;
+                //cout << "huidu is" << motion.at<uchar>(j,i)<<endl; 
+                if(static_cast<int>(motion.at<uchar>(j,i)) == 255 )
                 {
                     number_of_changes ++;
                     if(min_x>j) min_x = i;
@@ -151,10 +154,12 @@ int main()
     //double dWidth = cap.get(CV_CAP_PROP_FRAME_WIDTH); //get the width of frames of the video
     //double dHeight = cap.get(CV_CAP_PROP_FRAME_HEIGHT); //get the height of frames of the video
     //cout << "Frame size : " << dWidth << " x " << dHeight << endl;
-    //namedWindow("MyVideo",CV_WINDOW_AUTOSIZE); //create a window called "MyVideo"
+    namedWindow("MyVideo",CV_WINDOW_AUTOSIZE); //create a window called "MyVideo"
     
     Mat result, result_cropped;
     Mat p_frame, c_frame, n_frame;
+
+    usleep(10000);
     cap.read(reference_image1);  //read the first image as reference image
     cap.read(reference_image2);
     //cap.read(p_frame);
@@ -169,7 +174,15 @@ int main()
     result = reference_image1;
     cvtColor(reference_image1, reference_image1, CV_RGB2GRAY);
     cvtColor(reference_image2, reference_image2, CV_RGB2GRAY);
+
+    equalizeHist(reference_image1, reference_image1);
+    equalizeHist(reference_image2, reference_image2);
     //imshow("MyVideo",n_frame);
+
+    //namedWindow("reference image1", CV_WINDOW_AUTOSIZE);
+    //namedWindow("reference image2", CV_WINDOW_AUTOSIZE);
+    //imshow("reference image1", reference_image1);
+    //imshow("reference image2", reference_image2);
 
     Mat difference1 , difference2;
     Mat motion;
@@ -186,8 +199,8 @@ int main()
     //int x_stop = c_frame.cols, x_start = 0;
     //int y_stop = c_frame.cols, y_start = 0;
 
-    int x_start = 10, x_stop = c_frame.cols-11;
-    int y_start = 350, y_stop = c_frame.rows-11;
+    int x_start = 10, x_stop = reference_image1.cols-11;
+    int y_start = 350, y_stop = reference_image1.rows-11;
     //int y_start = 350, y_stop = 530;
     
     cout << c_frame.cols << endl;
@@ -212,7 +225,7 @@ int main()
         //cvtColor(n_frame, n_frame, CV_RGB2GRAY);
         
         cvtColor(c_frame, c_frame, CV_RGB2GRAY); 
-
+        equalizeHist(c_frame, c_frame);
 
         //absdiff(p_frame, n_frame, difference1);
         //absdiff(n_frame, c_frame, difference2);
@@ -223,7 +236,7 @@ int main()
         bitwise_and(difference1, difference2, motion);
         threshold(motion, motion, 35, 255, CV_THRESH_BINARY); //set threshold to get object from backgroud
         erode(motion, motion, kernel_ero);
-        //imshow("MyVideo",motion);
+        imshow("MyVideo",motion);
        
         nChanges = detectMotopn(motion, result, result_cropped, x_start, x_stop, y_start, y_stop, maxDev, color);
         cout << "number of changes are"<< nChanges << endl;
