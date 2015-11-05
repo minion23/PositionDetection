@@ -55,6 +55,31 @@ inline bool saveImg(Mat image, const string DIRECTORY, const string EXTENSION, c
     return imwrite(ss.str().c_str(), image);
 }
 
+inline int brightness_uniform(Mat image1, Mat image2){
+    int y_start = image1.rows-11, y_end = image1.rows;
+    int x_start = 0, x_end = image1.cols;
+    int n = 0;
+    int differenceTotal = 0;
+    for(int j = y_start; j<y_end; j+= 2){      //height of images
+        for(int i = x_start; i<x_end; i+=2){   //width of images
+            //cout <<"image2 is" <<static_cast<int>(image2.at<uchar>(j,i));
+            //cout <<": image1 is" <<static_cast<int>(image1.at<uchar>(j,i)) <<endl;
+
+            differenceTotal = differenceTotal +(static_cast<int>(image2.at<uchar>(j,i)) - static_cast<int>(image1.at<uchar>(j,i)));
+            //cout << "difference is" << (static_cast<int>(image2.at<uchar>(j,i)) - static_cast<int>(image1.at<uchar>(j,i))) << endl;
+            //cout << "total is" << differenceTotal << endl;
+            
+            n = n+1;
+        }
+    }
+    int difference = 0; 
+    difference = differenceTotal / n+1;
+    //cout<< "d is "<< difference <<endl;
+    return difference;
+}
+
+
+
 inline void PostData(int area_number){
     CURL *curl;
     CURLcode res;
@@ -83,10 +108,11 @@ inline int detectMotopn(const Mat & motion, Mat & result, Mat & result_cropped,
     Scalar mean, stddev;
     meanStdDev(motion,mean,stddev);
     if(stddev[0] < max_deviation)
-    {
+    {   
+        //int start_point;
         int number_of_changes = 0;
         int min_x = motion.cols, max_x = 0;
-        int min_y = motion.cols, max_y = 0;
+        int min_y = motion.rows, max_y = 0;
         //cout << "stdev is" << stddev[0]<<endl; 
         //cout << "y is" << y_start << y_stop<<endl;
         //cout << "x is" << x_start << x_stop <<endl;
@@ -99,8 +125,8 @@ inline int detectMotopn(const Mat & motion, Mat & result, Mat & result_cropped,
                 if(static_cast<int>(motion.at<uchar>(j,i)) == 255 )
                 {
                     number_of_changes ++;
-                    if(min_x>j) min_x = i;
-                    if(max_x<j) max_x = i;
+                    if(min_x>i) min_x = i;
+                    if(max_x<i) max_x = i;
                     if(min_y>j) min_y = j;
                     if(max_y<j) max_y = j;
                 }
@@ -159,8 +185,9 @@ int main()
     Mat result, result_cropped;
     Mat p_frame, c_frame, n_frame;
 
-    usleep(10000);
+    usleep(1000000);
     cap.read(reference_image1);  //read the first image as reference image
+    usleep(1000000);
     cap.read(reference_image2);
     //cap.read(p_frame);
     //result = p_frame;
@@ -175,8 +202,8 @@ int main()
     cvtColor(reference_image1, reference_image1, CV_RGB2GRAY);
     cvtColor(reference_image2, reference_image2, CV_RGB2GRAY);
 
-    equalizeHist(reference_image1, reference_image1);
-    equalizeHist(reference_image2, reference_image2);
+    //equalizeHist(reference_image1, reference_image1);
+    //equalizeHist(reference_image2, reference_image2);
     //imshow("MyVideo",n_frame);
 
     //namedWindow("reference image1", CV_WINDOW_AUTOSIZE);
@@ -194,13 +221,13 @@ int main()
     // maxDec decide the toleration of motion
     // this two value can be changed
     int motion_threthold = 5;
-    int maxDev = 20;
+    int maxDev = 0;
     
     //int x_stop = c_frame.cols, x_start = 0;
     //int y_stop = c_frame.cols, y_start = 0;
 
-    int x_start = 10, x_stop = reference_image1.cols-11;
-    int y_start = 350, y_stop = reference_image1.rows-11;
+    int x_start = 0, x_stop = reference_image1.cols;
+    int y_start = 0, y_stop = reference_image1.rows-11;
     //int y_start = 350, y_stop = 530;
     
     cout << c_frame.cols << endl;
@@ -208,6 +235,9 @@ int main()
     
     while (true)
     {
+        int d1, d2;
+        d1 = 0;
+        d2 = 0;
         //Mat frame;
         //bool bSuccess = cap.read(frame); // read a new frame from video
          //if (!bSuccess) //if not success, break loop
@@ -225,11 +255,15 @@ int main()
         //cvtColor(n_frame, n_frame, CV_RGB2GRAY);
         
         cvtColor(c_frame, c_frame, CV_RGB2GRAY); 
-        equalizeHist(c_frame, c_frame);
+        //equalizeHist(c_frame, c_frame);
 
         //absdiff(p_frame, n_frame, difference1);
         //absdiff(n_frame, c_frame, difference2);
-        
+        //d1 = brightness_uniform(reference_image1, c_frame);
+        //d2 = brightness_uniform(reference_image2, c_frame);
+        //reference_image1 = reference_image1 + d1;
+        //reference_image2 = reference_image2 + d2;
+
         absdiff(reference_image1, c_frame, difference1);
         absdiff(c_frame, reference_image2, difference2);
         
