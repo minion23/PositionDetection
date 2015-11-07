@@ -60,21 +60,39 @@ inline int brightness_uniform(Mat image1, Mat image2){
     int x_start = 0, x_end = image1.cols;
     int n = 0;
     int differenceTotal = 0;
+    int total = 0;
     for(int j = y_start; j<y_end; j+= 2){      //height of images
         for(int i = x_start; i<x_end; i+=2){   //width of images
             //cout <<"image2 is" <<static_cast<int>(image2.at<uchar>(j,i));
             //cout <<": image1 is" <<static_cast<int>(image1.at<uchar>(j,i)) <<endl;
-
-            differenceTotal = differenceTotal +(static_cast<int>(image2.at<uchar>(j,i)) - static_cast<int>(image1.at<uchar>(j,i)));
-            //cout << "difference is" << (static_cast<int>(image2.at<uchar>(j,i)) - static_cast<int>(image1.at<uchar>(j,i))) << endl;
+            //if(static_cast<int>(image1.at<uchar>(j,i)) != 0){
+                //differenceTotal = differenceTotal +(static_cast<int>(image2.at<uchar>(j,i)) / static_cast<int>(image1.at<uchar>(j,i))); 
+            //}else{
+                //differenceTotal = differenceTotal + 1;
+            //}
+            ////cout << "difference is" << (static_cast<int>(image2.at<uchar>(j,i)) - static_cast<int>(image1.at<uchar>(j,i))) << endl;
             //cout << "total is" << differenceTotal << endl;
-            
+            differenceTotal = differenceTotal + static_cast<int>(image2.at<uchar>(j,i));
+            total = total + static_cast<int>(image1.at<uchar>(j,i)); 
+
+             
             n = n+1;
         }
     }
     int difference = 0; 
-    difference = differenceTotal / n+1;
+    //cout << "1: " << differenceTotal<<endl;
+    //cout << "2: " << total <<endl;
+
+    difference = differenceTotal / total;
     //cout<< "d is "<< difference <<endl;
+    //image1 = imag1 * d;
+    //for(int j = 0; j < image1.rows; j+=2){
+        //for(int i = 0; i < image2.cols; i+=2){
+        
+     
+        //}
+    //}
+
     return difference;
 }
 
@@ -185,9 +203,9 @@ int main()
     Mat result, result_cropped;
     Mat p_frame, c_frame, n_frame;
 
-    usleep(1000000);
+    usleep(100000);
     cap.read(reference_image1);  //read the first image as reference image
-    usleep(1000000);
+    usleep(100000);
     cap.read(reference_image2);
     //cap.read(p_frame);
     //result = p_frame;
@@ -202,8 +220,8 @@ int main()
     cvtColor(reference_image1, reference_image1, CV_RGB2GRAY);
     cvtColor(reference_image2, reference_image2, CV_RGB2GRAY);
 
-    //equalizeHist(reference_image1, reference_image1);
-    //equalizeHist(reference_image2, reference_image2);
+    equalizeHist(reference_image1, reference_image1);
+    equalizeHist(reference_image2, reference_image2);
     //imshow("MyVideo",n_frame);
 
     //namedWindow("reference image1", CV_WINDOW_AUTOSIZE);
@@ -255,22 +273,32 @@ int main()
         //cvtColor(n_frame, n_frame, CV_RGB2GRAY);
         
         cvtColor(c_frame, c_frame, CV_RGB2GRAY); 
-        //equalizeHist(c_frame, c_frame);
+        equalizeHist(c_frame, c_frame);
 
         //absdiff(p_frame, n_frame, difference1);
         //absdiff(n_frame, c_frame, difference2);
-        //d1 = brightness_uniform(reference_image1, c_frame);
-        //d2 = brightness_uniform(reference_image2, c_frame);
-        //reference_image1 = reference_image1 + d1;
-        //reference_image2 = reference_image2 + d2;
+       
+        namedWindow("c_frame: ",CV_WINDOW_AUTOSIZE); 
 
-        absdiff(reference_image1, c_frame, difference1);
-        absdiff(c_frame, reference_image2, difference2);
+        imshow("reference image1", reference_image1);
+        imshow("c_frame: ", c_frame);
+        d1 = brightness_uniform(reference_image1, c_frame);
+        d2 = brightness_uniform(reference_image2, c_frame);
+
+        Mat reference_image1_u = reference_image1 * d1;
+        Mat reference_image2_u = reference_image2 * d2;
+
+        namedWindow("reference_image1_u",CV_WINDOW_AUTOSIZE); 
+        imshow("reference_image1_u", reference_image1_u);
+        absdiff(reference_image1_u, c_frame, difference1);
+        absdiff(c_frame, reference_image2_u, difference2);
         
         bitwise_and(difference1, difference2, motion);
         threshold(motion, motion, 35, 255, CV_THRESH_BINARY); //set threshold to get object from backgroud
         erode(motion, motion, kernel_ero);
-        imshow("MyVideo",motion);
+
+        //namedWindow("MyVideo2",CV_WINDOW_AUTOSIZE); //create a window called "MyVideo"
+        //imshow("MyVideo2",motion);
        
         nChanges = detectMotopn(motion, result, result_cropped, x_start, x_stop, y_start, y_stop, maxDev, color);
         cout << "number of changes are"<< nChanges << endl;
