@@ -1,0 +1,14 @@
+#IncludeRegexLine: ^[ 	]*#[ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/Users/yangyang/GitHub/UCLA_EE209_PositionDetection/HOG_Dete/main.cpp
+iostream
+-
+opencv2/opencv.hpp
+-
+

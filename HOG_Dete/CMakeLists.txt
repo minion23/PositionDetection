@@ -1,0 +1,5 @@
+cmake_minimum_required(VERSION 2.8)
+project( DisplayImage )
+find_package( OpenCV REQUIRED )
+add_executable( HOG_DisplayImage main.cpp )
+target_link_libraries( HOG_DisplayImage ${OpenCV_LIBS} )
