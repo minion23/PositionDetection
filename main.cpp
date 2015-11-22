@@ -98,26 +98,26 @@ inline int brightness_uniform(Mat image1, Mat image2){
 
 
 
-inline void PostData(int area_number){
-    CURL *curl;
-    CURLcode res;
+//inline void PostData(int area_number){
+    //CURL curl;
+    //CURLcode res;
 
-    curl_global_init(CURL_GLOBAL_ALL);
+    //curl_global_init(CURL_GLOBAL_ALL);
 
-    curl = curl_easy_init();
-    if(curl){
-        curl_easy_setopt(curl, CURLOPT_URL, "127.0.0.1:8010");
-        curl_easy_setopt(curl, CURLOPT_POSTFIELDS, area_number); 
+    //curl = curl_easy_init();
+    //if(curl){
+        //curl_easy_setopt(curl, CURLOPT_URL, "127.0.0.1:8010");
+        //curl_easy_setopt(curl, CURLOPT_POSTFIELDS, area_number); 
 
-        res = curl_easy_perform(curl);  
+        //res = curl_easy_perform(curl);  
   
-        if(res != CURLE_OK)  
-            fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(res));  
+        //if(res != CURLE_OK)  
+            //fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(res));  
         
-        curl_easy_cleanup(curl); 
-    }
-    curl_global_cleanup(); 
-}
+        //curl_easy_cleanup(curl); 
+    //}
+    //curl_global_cleanup(); 
+//}
 
 inline int detectMotopn(const Mat & motion, Mat & result, Mat & result_cropped,
                         int x_start, int x_stop, int y_start, int y_stop, int max_deviation,

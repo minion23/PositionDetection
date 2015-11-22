@@ -7,8 +7,16 @@
 #IncludeRegexTransform: 
 
 /Users/yangyang/GitHub/UCLA_EE209_PositionDetection/HOG_Dete/main.cpp
-iostream
+opencv2/imgproc/imgproc.hpp
+/Users/yangyang/GitHub/UCLA_EE209_PositionDetection/HOG_Dete/opencv2/imgproc/imgproc.hpp
+opencv2/objdetect/objdetect.hpp
+/Users/yangyang/GitHub/UCLA_EE209_PositionDetection/HOG_Dete/opencv2/objdetect/objdetect.hpp
+opencv2/highgui/highgui.hpp
+/Users/yangyang/GitHub/UCLA_EE209_PositionDetection/HOG_Dete/opencv2/highgui/highgui.hpp
+stdio.h
 -
-opencv2/opencv.hpp
+string.h
+-
+ctype.h
 -
 
