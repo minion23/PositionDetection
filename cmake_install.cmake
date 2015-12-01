@@ -1,4 +1,4 @@
-# Install script for directory: /Users/yangyang/GitHub/UCLA_EE209_PositionDetection
+# Install script for directory: /Users/yangyang/Github/PositionDetection
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -33,7 +33,7 @@ else()
   set(CMAKE_INSTALL_MANIFEST "install_manifest.txt")
 endif()
 
-file(WRITE "/Users/yangyang/GitHub/UCLA_EE209_PositionDetection/${CMAKE_INSTALL_MANIFEST}" "")
-foreach(file ${CMAKE_INSTALL_MANIFEST_FILES})
-  file(APPEND "/Users/yangyang/GitHub/UCLA_EE209_PositionDetection/${CMAKE_INSTALL_MANIFEST}" "${file}\n")
-endforeach()
+string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
+       "${CMAKE_INSTALL_MANIFEST_FILES}")
+file(WRITE "/Users/yangyang/Github/PositionDetection/${CMAKE_INSTALL_MANIFEST}"
+     "${CMAKE_INSTALL_MANIFEST_CONTENT}")

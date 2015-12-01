@@ -1,1 +1,1 @@
-/Users/yangyang/GitHub/UCLA_EE209_PositionDetection/CMakeFiles/DisplayImage.dir
+/Users/yangyang/Github/PositionDetection/CMakeFiles/DisplayImage.dir

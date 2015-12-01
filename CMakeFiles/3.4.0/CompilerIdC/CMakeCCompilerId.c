@@ -130,7 +130,7 @@
 
 #elif defined(_CRAYC)
 # define COMPILER_ID "Cray"
-# define COMPILER_VERSION_MAJOR DEC(_RELEASE)
+# define COMPILER_VERSION_MAJOR DEC(_RELEASE_MAJOR)
 # define COMPILER_VERSION_MINOR DEC(_RELEASE_MINOR)
 
 #elif defined(__TI_COMPILER_VERSION__)
@@ -181,7 +181,9 @@
 #elif defined(__GNUC__)
 # define COMPILER_ID "GNU"
 # define COMPILER_VERSION_MAJOR DEC(__GNUC__)
-# define COMPILER_VERSION_MINOR DEC(__GNUC_MINOR__)
+# if defined(__GNUC_MINOR__)
+#  define COMPILER_VERSION_MINOR DEC(__GNUC_MINOR__)
+# endif
 # if defined(__GNUC_PATCHLEVEL__)
 #  define COMPILER_VERSION_PATCH DEC(__GNUC_PATCHLEVEL__)
 # endif
@@ -261,8 +263,11 @@ char const* info_simulate = "INFO" ":" "simulate[" SIMULATE_ID "]";
 #endif
 
 #ifdef __QNXNTO__
-char const* qnxnto = "INFO" ":" "qnxnto";
+char const* qnxnto = "INFO" ":" "qnxnto[]";
 #endif
+
+#define STRINGIFY_HELPER(X) #X
+#define STRINGIFY(X) STRINGIFY_HELPER(X)
 
 /* Identify known platforms by name.  */
 #if defined(__linux) || defined(__linux__) || defined(linux)
@@ -378,7 +383,13 @@ char const* qnxnto = "INFO" ":" "qnxnto";
 #  define ARCHITECTURE_ID "X86"
 
 # elif defined(_M_ARM)
-#  define ARCHITECTURE_ID "ARM"
+#  if _M_ARM == 4
+#   define ARCHITECTURE_ID "ARMV4I"
+#  elif _M_ARM == 5
+#   define ARCHITECTURE_ID "ARMV5I"
+#  else
+#   define ARCHITECTURE_ID "ARMV" STRINGIFY(_M_ARM)
+#  endif
 
 # elif defined(_M_MIPS)
 #  define ARCHITECTURE_ID "MIPS"
@@ -472,6 +483,17 @@ char const* info_arch = "INFO" ":" "arch[" ARCHITECTURE_ID "]";
 
 
 
+
+const char* info_language_dialect_default = "INFO" ":" "dialect_default["
+#if !defined(__STDC_VERSION__)
+  "90"
+#elif __STDC_VERSION__ >= 201000L
+  "11"
+#elif __STDC_VERSION__ >= 199901L
+  "99"
+#else
+#endif
+"]";
 
 /*--------------------------------------------------------------------------*/
 
