@@ -1,5 +1,11 @@
 cmake_minimum_required(VERSION 2.8)
-project( DisplayImage )
+project( HOG )
 find_package( OpenCV REQUIRED )
-add_executable( HOG_DisplayImage main.cpp )
+set(folder_source Ctracker.cpp HungarianAlg.cpp Kalman.cpp main.cpp HOG.cpp)
+set(folder_header HOG.h Ctracker.h HungarianAlg.h Kalman.h)
+
+SOURCE_GROUP("Source Files" FILES ${folder_source})
+SOURCE_GROUP("Header Files" FILES ${folder_header})
+
+add_executable( HOG_DisplayImage ${folder_source} ${folder_header} )
 target_link_libraries( HOG_DisplayImage ${OpenCV_LIBS} )
