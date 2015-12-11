@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 2.8)
 project( HOG )
 find_package( OpenCV REQUIRED )
 set(folder_source Ctracker.cpp HungarianAlg.cpp Kalman.cpp main.cpp HOG.cpp)
-set(folder_header HOG.h Ctracker.h HungarianAlg.h Kalman.h)
+set(folder_header ROI.h HOG.h Ctracker.h HungarianAlg.h Kalman.h)
 
 SOURCE_GROUP("Source Files" FILES ${folder_source})
 SOURCE_GROUP("Header Files" FILES ${folder_header})

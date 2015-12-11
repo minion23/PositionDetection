@@ -61,7 +61,7 @@ void CTracker::Update(vector<Point2d>& detections)
 	int M=detections.size();
 
 	vector< vector<double> > Cost(N,vector<double>(M));
-	vector<int> assignment; // назначения
+	vector<int> assignment;
 
 	double dist;
 	for(int i=0;i<tracks.size();i++)

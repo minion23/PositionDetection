@@ -53,7 +53,7 @@ vector<Rect> HOGDetector::Detect(Mat gray)
         r.height = cvRound(r.height*0.8);
         Point2d center;
         center.x = r.x+r.width/2;
-        center.y = r.y+r.height/2;
+        center.y = r.y+r.height;
         centers.push_back(center);
     }
     return found_filtered;
